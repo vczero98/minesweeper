@@ -16,11 +16,9 @@ class Board {
 			}
 		}
 
-		this.generateMines();
-		for (var i = 0; i < width; i++) {
-			for (var j = 0; j < height; j++) {
-				this.drawBlock(i,j);
-			}
+		// Disable context menu at right click
+		this.canvas.oncontextmenu = function() {
+			return false;
 		}
 	}
 
@@ -52,8 +50,16 @@ class Board {
 			}
 
 		} else {
-			blockCtx.fillStyle = "grey";
-			blockCtx.fillRect(0, 0, 100, 100);
+			if (block.flagged) {
+				blockCtx.fillStyle = "grey";
+				blockCtx.fillRect(0, 0, 100, 100);
+				blockCtx.fillStyle = "black";
+				blockCtx.font = "14px Arial";
+				blockCtx.fillText("!", 8, 16);
+			} else {
+				blockCtx.fillStyle = "grey";
+				blockCtx.fillRect(0, 0, 100, 100);
+			}
 		}
 
 		var img = new Image();
@@ -62,8 +68,8 @@ class Board {
 	}
 
 	expandBlock(x, y) {
-		var block = this.blocks[x][y]
-		if (block.expanded) {
+		var block = this.blocks[x][y];
+		if (block.expanded || block.flagged) {
 			return;
 		}
 		block.expanded = true;
@@ -74,6 +80,15 @@ class Board {
 				this.expandBlock(neighbours[i][0], neighbours[i][1]);
 			}
 		}
+	}
+
+	flagBlock(x, y) {
+		var block = this.blocks[x][y];
+		if (block.expanded) {
+			return;
+		}
+		block.flagged = !block.flagged;
+		this.drawBlock(x, y);
 	}
 
 	generateMines() {
