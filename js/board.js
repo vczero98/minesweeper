@@ -74,7 +74,7 @@ class Board {
 		}
 		block.expanded = true;
 		this.drawBlock(x, y);
-		if (block.n == 0) {
+		if (block.n == 0 && !block.isMine) {
 			var neighbours = this.getNeighboursOfBlock(x, y);
 			for (var i = 0; i < neighbours.length; i++) {
 				this.expandBlock(neighbours[i][0], neighbours[i][1]);
