@@ -14,10 +14,7 @@ class Board {
 				this.blocks[i][j] = b;
 				this.drawBlock(i,j);
 			}
-			//this.drawBlock(0,0);
 		}
-
-		var b = new Block(this.ctx);
 	}
 
 	drawBoard() {
@@ -25,21 +22,35 @@ class Board {
 		this.canvas.height = this.height * 21 + 1;
 		this.canvas.width = this.width * 21 + 1;
 		this.ctx = this.canvas.getContext("2d");
-
+		console.log(document.body);
 		document.body.appendChild(this.canvas);
 	}
 
 	drawBlock(x, y) {
-		var block = this.blocks[x][y];
-		var c = document.createElement("canvas");
-		c.width = c.height = 20;
-		var _ctx = c.getContext("2d");
+		var block = this.blocks[x][y]; // Get the from indices
+		// Create canvas and ctx
+		var blockCanvas = document.createElement("canvas");
+		blockCanvas.width = blockCanvas.height = 20;
+		var blockCtx = blockCanvas.getContext("2d");
 
-		_ctx.fillStyle = "grey";
+		if (block.expanded) {
+			blockCtx.fillStyle = "lightgrey";
+			blockCtx.fillRect(0, 0, 100, 100);
+			blockCtx.fillStyle = "black";
+			blockCtx.font = "14px Arial";
+			if (!block.isMine) {
+				blockCtx.fillText(block.n == 0 ? "" : block.n, 6, 16); // Add the number if it is not 0
+			} else {
+				blockCtx.fillText("M", 4, 16);
+			}
 
-		_ctx.fillRect(0, 0, 100, 100);
+		} else {
+			blockCtx.fillStyle = "grey";
+			blockCtx.fillRect(0, 0, 100, 100);
+		}
+
 		var img = new Image();
-		img.src = c.toDataURL();
+		img.src = blockCanvas.toDataURL();
 		this.ctx.drawImage(img, (x * 20) + (x + 1), (y * 20) + (y + 1))
 	}
 }
