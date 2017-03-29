@@ -5,6 +5,7 @@ class Board {
 		this.numMines = Math.min(numMines, (height * width - 1));
 		this.blocks = new Array(width);
 		this.drawBoard();
+		this.gameStarted = false;
 
 		// Creating blocks
 		for (var i = 0; i < width; i++) {
@@ -96,10 +97,11 @@ class Board {
 		while (minesLeft != 0) {
 			var xPos = Math.trunc(Math.random() * this.width); // Generate a number from 0 to the upper bound (exclusive)
 			var yPos = Math.trunc(Math.random() * this.height);
-			// Check if the block is not a mine already
-			if (!this.blocks[xPos][yPos].isMine) {
+			var block = this.blocks[xPos][yPos];
+			// Check if the block is not a mine already or not protected
+			if (!block.isMine && !block.protected) {
 				// Set the block to be a mine
-				this.blocks[xPos][yPos].isMine = true;
+				block.isMine = true;
 				this.drawBlock(xPos, yPos);
 				// Increase the number of the neighbours of the mine
 				var neighbours = this.getNeighboursOfBlock(xPos, yPos);

@@ -12,6 +12,16 @@ window.onload = function() {
 
 		if (evt.which == 1) {
 			// If the click is a left click
+			if (!board.gameStarted) {
+				// Protect the selected block and its neighbours
+				board.blocks[x][y].protected = true;
+				var neighbours = board.getNeighboursOfBlock(x, y);
+				for (var i = 0; i < neighbours.length; i++) {
+					board.blocks[neighbours[i][0]][neighbours[i][1]].protected = true;
+				}
+				board.generateMines();
+				board.gameStarted = true;
+			}
 			board.expandBlock(x, y);
 			return;
 		} else if (evt.which == 3) {
@@ -20,8 +30,4 @@ window.onload = function() {
 			return;
 		}
 	});
-
-	function printParagraph(text) {
-		document.write("<p>" + text + "</p>");
-	}
 }
