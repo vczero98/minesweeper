@@ -1,6 +1,6 @@
 class Block {
 	constructor() {
-		this.expanded = true;
+		this.expanded = false;
 		this.isMine = false;
 		this.n = 0;
 	}

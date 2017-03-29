@@ -2,7 +2,7 @@ class Board {
 	constructor(height, width, numMines) {
 		this.height = height;
 		this.width = width;
-		this.numMines = numMines;
+		this.numMines = Math.min(numMines, (height * width - 1));
 		this.blocks = new Array(width);
 		this.drawBoard();
 
@@ -61,6 +61,21 @@ class Board {
 		this.ctx.drawImage(img, (x * 20) + (x + 1), (y * 20) + (y + 1))
 	}
 
+	expandBlock(x, y) {
+		var block = this.blocks[x][y]
+		if (block.expanded) {
+			return;
+		}
+		block.expanded = true;
+		this.drawBlock(x, y);
+		if (block.n == 0) {
+			var neighbours = this.getNeighboursOfBlock(x, y);
+			for (var i = 0; i < neighbours.length; i++) {
+				this.expandBlock(neighbours[i][0], neighbours[i][1]);
+			}
+		}
+	}
+
 	generateMines() {
 		var minesLeft = this.numMines;
 		while (minesLeft != 0) {
@@ -74,7 +89,7 @@ class Board {
 				// Increase the number of the neighbours of the mine
 				var neighbours = this.getNeighboursOfBlock(xPos, yPos);
 				for (var i = 0; i < neighbours.length; i++) {
-					neighbours[i].incrementN();
+					this.blocks[neighbours[i][0]][neighbours[i][1]].incrementN();
 				}
 				minesLeft--;
 			}
@@ -86,7 +101,7 @@ class Board {
 		for (var i = (x - 1); i <= (x + 1); i++) {
 			for (var j = (y - 1); j <= (y + 1); j++) {
 				if (!(i == x && j == y) && !this.isOutOfRange(i, j)) {
-					neighbours.push(this.blocks[i][j]);
+					neighbours.push([i, j]);
 				}
 			}
 		}
