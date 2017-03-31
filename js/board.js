@@ -51,7 +51,7 @@ class Board {
 				}
 			} else {
 				if (block.flagged) {
-					img.src += "flag.png";
+					img.src += "red_flag.png";
 				} else {
 					img.src += "unexpanded.png";
 				}
@@ -60,7 +60,7 @@ class Board {
 			if (block.losingBlock) {
 				img.src += "mine_clicked.png";
 			} else if (block.isMine && block.flagged) {
-				img.src += "flag.png";
+				img.src += "green_flag.png";
 			} else if (block.isMine && !block.flagged) {
 				img.src += "mine.png";
 			} else if (!block.isMine && block.flagged) {
@@ -138,7 +138,7 @@ class Board {
 		for (var i = 0; i < this.width; i++) {
 			for (var j = 0; j < this.height; j++) {
 				var block = this.blocks[i][j];
-				if (block.isMine && !block.flagged) {
+				if (block.isMine) {
 					block.expanded = true;
 					this.drawBlock(i, j);
 				} else if (!block.isMine && block.flagged) {
