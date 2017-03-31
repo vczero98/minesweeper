@@ -1,9 +1,16 @@
-#game {
-	margin: auto;
-	height: auto;
-	width: auto;
+body {
+	/*background-color: #2A4582;*/
+	background-image: url("../images/background.png");
+    /*background-repeat: repeat-y;*/
 }
 
-canvas {
-	background-color: blue;
+#container {
+	margin-top: 70px;
+	text-align: center;
+}
+
+#game {
+	margin-left: auto;
+	margin-right: auto;
+	display: inline-block;
 }
