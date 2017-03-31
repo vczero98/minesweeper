@@ -5,6 +5,7 @@ class Block {
 		this.flagged = false;
 		this.n = 0;
 		this.protected = false;
+		this.losingBlock = false;
 	}
 
 	incrementN() {

@@ -1,3 +1,9 @@
+#game {
+	margin: auto;
+	height: auto;
+	width: auto;
+}
+
 canvas {
 	background-color: blue;
 }

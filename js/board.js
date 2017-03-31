@@ -6,6 +6,8 @@ class Board {
 		this.blocks = new Array(width);
 		this.drawBoard();
 		this.gameStarted = false;
+		this.gameOver = false;
+		this.blockSize = 24;
 
 		// Creating blocks
 		for (var i = 0; i < width; i++) {
@@ -25,53 +27,55 @@ class Board {
 
 	drawBoard() {
 		this.canvas = document.createElement("canvas");
-		this.canvas.height = this.height * 21 + 1;
-		this.canvas.width = this.width * 21 + 1;
+		this.canvas.height = this.height * 24;
+		this.canvas.width = this.width * 24;
 		this.ctx = this.canvas.getContext("2d");
-		console.log(document.body);
-		document.body.appendChild(this.canvas);
+		document.getElementById("game").appendChild(this.canvas);
 	}
 
 	drawBlock(x, y) {
 		var block = this.blocks[x][y]; // Get the from indices
 		// Create canvas and ctx
 		var blockCanvas = document.createElement("canvas");
-		blockCanvas.width = blockCanvas.height = 20;
 		var blockCtx = blockCanvas.getContext("2d");
 
-		if (block.expanded) {
-			blockCtx.fillStyle = "lightgrey";
-			blockCtx.fillRect(0, 0, 100, 100);
-			blockCtx.fillStyle = "black";
-			blockCtx.font = "14px Arial";
-			if (!block.isMine) {
-				blockCtx.fillText(block.n == 0 ? "" : block.n, 6, 16); // Add the number if it is not 0
-			} else {
-				blockCtx.fillText("M", 4, 16);
-			}
+		var img = new Image();
+		img.src = "images/"
 
-		} else {
-			if (block.flagged) {
-				blockCtx.fillStyle = "grey";
-				blockCtx.fillRect(0, 0, 100, 100);
-				blockCtx.fillStyle = "black";
-				blockCtx.font = "14px Arial";
-				blockCtx.fillText("!", 8, 16);
+		if (!this.gameOver) {
+			if (block.expanded) {
+				if (block.isMine) {
+					img.src += "mine.png";
+				} else {
+					img.src += block.n + ".png";
+				}
 			} else {
-				blockCtx.fillStyle = "grey";
-				blockCtx.fillRect(0, 0, 100, 100);
+				if (block.flagged) {
+					img.src += "flag.png";
+				} else {
+					img.src += "unexpanded.png";
+				}
+			}
+		} else {
+			if (block.losingBlock) {
+				img.src += "mine_clicked.png";
+			} else if (block.isMine && block.flagged) {
+				img.src += "flag.png";
+			} else if (block.isMine && !block.flagged) {
+				img.src += "mine.png";
+			} else if (!block.isMine && block.flagged) {
+				img.src += "broken_flag.png";
 			}
 		}
 
-		var img = new Image();
-		img.src = blockCanvas.toDataURL();
-		this.ctx.drawImage(img, (x * 20) + (x + 1), (y * 20) + (y + 1))
+		//img.src = blockCanvas.toDataURL();
+		this.ctx.drawImage(img, x * this.blockSize, y * this.blockSize)
 	}
 
 	expandBlock(x, y) {
 		var block = this.blocks[x][y];
 		if (block.expanded || block.flagged) {
-			return;
+			return false;
 		}
 		block.expanded = true;
 		this.drawBlock(x, y);
@@ -81,6 +85,7 @@ class Board {
 				this.expandBlock(neighbours[i][0], neighbours[i][1]);
 			}
 		}
+		return true;
 	}
 
 	flagBlock(x, y) {
@@ -109,6 +114,36 @@ class Board {
 					this.blocks[neighbours[i][0]][neighbours[i][1]].incrementN();
 				}
 				minesLeft--;
+			}
+		}
+	}
+
+	clickBlock(x, y) {
+		// Returns false if the game is over, true otherwise
+		if (this.gameOver) {
+			return true;
+		}
+		if (this.expandBlock(x, y)) {
+			if (this.blocks[x][y].isMine) {
+				this.blocks[x][y].losingBlock = true;
+				this.endGame();
+				return false;
+			}
+		}
+		return true;
+	}
+
+	endGame() {
+		this.gameOver = true;
+		for (var i = 0; i < this.width; i++) {
+			for (var j = 0; j < this.height; j++) {
+				var block = this.blocks[i][j];
+				if (block.isMine && !block.flagged) {
+					block.expanded = true;
+					this.drawBlock(i, j);
+				} else if (!block.isMine && block.flagged) {
+					this.drawBlock(i, j);
+				}
 			}
 		}
 	}
