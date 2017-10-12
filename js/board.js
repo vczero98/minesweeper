@@ -29,6 +29,7 @@ class Board {
 		this.canvas = document.createElement("canvas");
 		this.canvas.height = this.height * 24;
 		this.canvas.width = this.width * 24;
+		document.getElementById("head").style.width = this.canvas.width + "px"; // Set the width of the head
 		this.ctx = this.canvas.getContext("2d");
 		document.getElementById("game").appendChild(this.canvas);
 	}
