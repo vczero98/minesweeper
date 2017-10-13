@@ -3,11 +3,15 @@ class Board {
 		this.height = height;
 		this.width = width;
 		this.numMines = Math.min(numMines, (height * width - 1));
+		this.numMinesLeft = this.numMines;
 		this.blocks = new Array(width);
 		this.drawBoard();
+		this.updateMineDisplay();
 		this.gameStarted = false;
 		this.gameOver = false;
 		this.blockSize = 24;
+		this.elapsedTime = 0;
+		this.timer;
 
 		// Creating blocks
 		for (var i = 0; i < width; i++) {
@@ -74,6 +78,7 @@ class Board {
 	}
 
 	expandBlock(x, y) {
+		// Returns true if the block can be expanded
 		var block = this.blocks[x][y];
 		if (block.expanded || block.flagged) {
 			return false;
@@ -94,8 +99,14 @@ class Board {
 		if (block.expanded) {
 			return;
 		}
+		if (block.flagged) {
+			this.numMinesLeft++;
+		} else {
+			this.numMinesLeft--;
+		}
 		block.flagged = !block.flagged;
 		this.drawBlock(x, y);
+		this.updateMineDisplay();
 	}
 
 	generateMines() {
@@ -134,8 +145,15 @@ class Board {
 		return true;
 	}
 
+	startGame() {
+		this.gameStarted = true;
+		document.getElementById("displayTime").innerText = 0;
+		this.timer = setInterval(this.updateTimeDisplay, 1000);
+	}
+
 	endGame() {
 		this.gameOver = true;
+		clearInterval(this.timer);
 		for (var i = 0; i < this.width; i++) {
 			for (var j = 0; j < this.height; j++) {
 				var block = this.blocks[i][j];
@@ -163,5 +181,14 @@ class Board {
 
 	isOutOfRange(x, y) {
 		return ((Math.min(x, y) < 0) || (x > (this.width - 1)) || (y > (this.height - 1)));
+	}
+
+	updateMineDisplay() {
+		document.getElementById("displayMinesLeft").innerText = Math.max(this.numMinesLeft, 0);
+	}
+
+	updateTimeDisplay() {
+		board.elapsedTime++;
+		document.getElementById("displayTime").innerText = board.elapsedTime;
 	}
 }

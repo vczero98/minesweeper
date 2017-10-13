@@ -1,6 +1,6 @@
 window.onload = function() {
-	board = new Board(16, 30, 99);
-	//board = new Board(10, 10, 2);
+	// board = new Board(30, 50, 150);
+	board = new Board(16, 30, 3);
 
 	board.canvas.addEventListener("mouseup", function(evt){
 		// Get the position of the click
@@ -20,7 +20,7 @@ window.onload = function() {
 					board.blocks[neighbours[i][0]][neighbours[i][1]].protected = true;
 				}
 				board.generateMines();
-				board.gameStarted = true;
+				board.startGame();
 			}
 			board.clickBlock(x, y);
 			return;
