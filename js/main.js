@@ -1,6 +1,6 @@
 window.onload = function() {
 	// board = new Board(30, 50, 150);
-	board = new Board(16, 30, 3);
+	board = new Board(16, 30, 99);
 
 	board.canvas.addEventListener("mouseup", function(evt){
 		// Get the position of the click
